@@ -4,6 +4,7 @@ class DummyEnum < Poppy::Enum
   values :one, :two
 
   class One
+    extend Poppy::Value
 
   end
 end
@@ -17,27 +18,25 @@ RSpec.describe Poppy::Enum do
   describe '.list_values' do
     subject { DummyEnum.list_values }
 
-    specify do
-      is_expected.to eq([:one, :two])
-    end
+    it { is_expected.to eq([:one, :two]) }
   end
 
   describe '.enum_for' do
     subject { DummyEnum.enum_for(value) }
 
-    context do
+    context 'invalid enum' do
       let(:value) { :invalid }
       specify { is_expected.to be_nil }
     end
 
-    context do
+    context 'valid enum' do
       let(:value) { :one }
-      specify { is_expected.to eq(DummyEnum::One) }
+      it { is_expected.to eq(DummyEnum::One) }
     end
 
     context 'with inexplicitly defined class' do
       let(:value) { :two }
-      specify { is_expected.to eq(DummyEnum::Two) }
+      it { is_expected.to eq(DummyEnum::Two) }
       specify 'is a Poppy::Value' do
         expect(subject).to be_a(Poppy::Value)
       end
@@ -46,14 +45,16 @@ RSpec.describe Poppy::Enum do
 
   describe '.list' do
     subject { DummyEnum.list }
-    specify { is_expected.to eq([DummyEnum::One, DummyEnum::Two])}
+    it { is_expected.to eq([DummyEnum::One, DummyEnum::Two])}
   end
 
   describe '.collection' do
-    pending
+    subject { DummyEnum.collection }
+    it { is_expected.to match_array([['One', 'one'], ['Two', 'two']]) }
   end
 
-  describe 'can define inexplicitly defined constants' do
-    specify { expect(DummyEnum2::Two).to be_a(Class) }
+  describe 'can call inexplicitly defined constants' do
+    specify { expect(DummyEnum2::One).to be_a(Class) }
+    specify { expect{ DummyEnum2::Wrong }.to raise_error(NameError)}
   end
 end
