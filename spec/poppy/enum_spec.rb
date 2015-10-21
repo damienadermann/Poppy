@@ -8,6 +8,10 @@ class DummyEnum < Poppy::Enum
   end
 end
 
+class DummyEnum2 < Poppy::Enum
+  values :one
+end
+
 RSpec.describe Poppy::Enum do
 
   describe '.list_values' do
@@ -31,17 +35,25 @@ RSpec.describe Poppy::Enum do
       specify { is_expected.to eq(DummyEnum::One) }
     end
 
-    context do
+    context 'with inexplicitly defined class' do
       let(:value) { :two }
       specify { is_expected.to eq(DummyEnum::Two) }
+      specify 'is a Poppy::Value' do
+        expect(subject).to be_a(Poppy::Value)
+      end
     end
   end
 
   describe '.list' do
-
+    subject { DummyEnum.list }
+    specify { is_expected.to eq([DummyEnum::One, DummyEnum::Two])}
   end
 
   describe '.collection' do
+    pending
+  end
 
+  describe 'can define inexplicitly defined constants' do
+    specify { expect(DummyEnum2::Two).to be_a(Class) }
   end
 end

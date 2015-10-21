@@ -5,3 +5,4 @@ module Poppy
 end
 
 require "poppy/enum"
+require "poppy/value"
