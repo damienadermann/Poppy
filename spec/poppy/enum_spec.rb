@@ -1,13 +1,14 @@
 require 'spec_helper'
 
-RSpec.describe Poppy::Enum do
-  class DummyEnum < Poppy::Enum
-    values :one, :two
+class DummyEnum < Poppy::Enum
+  values :one, :two
 
-    class One
+  class One
 
-    end
   end
+end
+
+RSpec.describe Poppy::Enum do
 
   describe '.list_values' do
     subject { DummyEnum.list_values }
@@ -32,7 +33,7 @@ RSpec.describe Poppy::Enum do
 
     context do
       let(:value) { :two }
-      specify { is_expected.to eq(DummyEnum::One) }
+      specify { is_expected.to eq(DummyEnum::Two) }
     end
   end
 
