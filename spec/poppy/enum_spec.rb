@@ -4,8 +4,7 @@ class DummyEnum < Poppy::Enum
   values :one, :two
 
   class One
-    extend Poppy::Value
-
+    include Poppy::Value
   end
 end
 
@@ -31,21 +30,22 @@ RSpec.describe Poppy::Enum do
 
     context 'valid enum' do
       let(:value) { :one }
-      it { is_expected.to eq(DummyEnum::One) }
+      it { is_expected.to eq(DummyEnum::ONE) }
+      it { is_expected.to be_instance_of(DummyEnum::One) }
     end
 
     context 'with inexplicitly defined class' do
       let(:value) { :two }
-      it { is_expected.to eq(DummyEnum::Two) }
+      it { is_expected.to eq(DummyEnum::TWO) }
       specify 'is a Poppy::Value' do
-        expect(subject).to be_a(Poppy::Value)
+        expect(subject).to be_kind_of(Poppy::Value)
       end
     end
   end
 
   describe '.list' do
     subject { DummyEnum.list }
-    it { is_expected.to eq([DummyEnum::One, DummyEnum::Two])}
+    it { is_expected.to eq([DummyEnum::ONE, DummyEnum::TWO])}
   end
 
   describe '.collection' do
