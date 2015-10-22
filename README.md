@@ -1,41 +1,230 @@
-# Poppy
+#Poppy
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/poppy`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+## Introduction
+TODO
 
 ## Installation
 
-Add this line to your application's Gemfile:
+``` bundle install poppy ```
 
-```ruby
-gem 'poppy'
+### Rails
+Add poppy to your `Gemfile`
+
+**optional**
+
+```bash
+$> rails g poppy:install
 ```
 
-And then execute:
+will add an initializer that calls
 
-    $ bundle
+```ruby
+ActiveRecord::Base.include(Poppy::ActiveRecord)
+``` 
 
-Or install it yourself as:
+this can be omitted by manually including the adapter in each model that uses Poppy
 
-    $ gem install poppy
+```ruby
+class Sandwhich < ActiveRecord::Base
+	include Poppy::ActiveRecord::Adapter
+	
+	enumeration :bread, of: Bread
+	#...
+end
+```
 
 ## Usage
 
-TODO: Write usage instructions here
 
-## Development
+### Basic
+```ruby
+class Bread < Poppy::Enum
+	values :white, :multigrain, :gluten_free
+end
+```
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+#### Using an enum value
+```ruby
+> bread = Bread::WHITE
+> bread 
+=> Bread::WHITE
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/poppy. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
+> bread.humanize
+=> White
+```
 
 
-## License
+#### Listing all enum values
+```
+> Bread.list
+=> [Bread::WHITE, BREAD::MULTIGRAIN, Bread::GLUTEN_FREE]
 
-The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
+> Bread.collection
+=> [['White', 'white'], ['Multigrain', 'multigrain'], ['Gluten free', 'gluten_free']
+```
 
+### Custom values
+Each enumeration value is able to define its own behavior. This makes our enumerations much more polymorphic. By defining classes we can decide the behavior each enumeration value has. Each value added to the enumeration will be created by instantiating the matching class 
+
+E.g. Bread::WHITE is created from the value :white. It is instantiated by the class Bread::White.
+
+If no matching class exists a class will be created before it is instantiated
+
+***Never instantiate a class directly. Enum::Value.new != Enum::VALUE***
+
+
+```ruby
+class Bread < Poppy::Enum
+	values :white, :multigrain
+
+	private
+
+	class White
+		extend Poppy::Value
+		
+		def self.enjoyed_by_kids?
+			true
+		end
+	end
+	
+	class Multigrain
+		extend Poppy::Value
+		
+		def self.enjoyed_by_kids?
+			false
+		end
+	end
+end
+
+white = Bread::WHITE
+multi = Bread::MULTIGRAIN
+
+puts white.enjoyed_by_kids? # true
+puts multi.enoyed_by_kids? # false
+
+```
+
+Each enumeration value is just a Poro. Each value has an interface of one method, `#humanize`. More methods can be added to build a more robust interface.
+
+`Poppy::Value` defines humanize to be the demodulized class name humanized and capitalized. You are free to implement this however you would like.
+
+E.g.
+
+```ruby
+class Bread < Poppy::Enum
+
+	value :white, class White
+		def self.humanize
+			'Black'
+		end
+	end
+	
+	value :multigrain, class Multigrain
+		extend Poppy::Value
+	end
+end
+
+```
+
+### Polymorphism
+
+
+By giving each Enumeration value behavior we can remove switch statements from our codebase.
+
+```ruby
+bread = Bread::WHITE
+
+case bread
+when Bread::WHITE
+	puts 'My kid will love this'
+when Bread::MULTIGRAIN
+	puts 'My kid will play bread frisbee'
+when Bread::GLUTEN_FREE
+	puts 'My kid will play bread frisbee'
+end
+
+```
+
+becomes
+
+```
+if bread.enjoyed_by_kids?
+	puts 'My kid will love this'
+else
+	puts 'My kid will play bread frisbee'
+end
+```
+
+## ActiveRecord Integration
+
+### Model
+```ruby
+class Sandwhich < ActiveRecord::Base
+	
+	enumeration :bread, of: Bread
+end
+```
+* Adding an enumeration to an active_record model will add an inclusion validation. There is no support for nullable enumerations. If you would like this functionality you will need to add a null value
+E.g. ` Bread::None `
+
+### Migrations
+
+```ruby
+class AddJobKindsToJob < ActiveRecord::Migration
+  def change
+    add_column :sandwhichess, :bread, :string, default: Bread::WHITE
+  end
+end
+```
+
+### In the wild
+
+```
+> sandwhich = Sandwhich.new(bread: Bread::WHITE)
+> sandwhich.bread
+=> Bread::WHITE
+
+> sandwhich.as_json 
+=> {bread: 'white', ... }
+```
+
+##API
+
+### Poppy::Enum
+#### .value_for
+
+```ruby
+> Bread.value_for(:white)
+=> Bread::WHITE
+```
+
+#### .values
+
+```ruby
+> Bread.values
+=> [:white, :multigrain, :gluten_free]
+```
+
+#### .list
+
+```ruby
+> Bread.list
+=> [Bread::WHITE, BREAD::MULTIGRAIN, Bread::GLUTEN_FREE]
+```
+
+#### .collection
+```ruby
+> Bread.collection
+=> [['White', 'white'], ['Multigrain', 'multigrain'], ['Gluten free', 'gluten_free']
+```
+* element.first is defined by the humanized value
+
+For use with the Rails form builder
+
+### Poppy::Value
+
+#### #humanize
+```ruby
+> Bread::WHITE.humanize
+=> White 
+```
