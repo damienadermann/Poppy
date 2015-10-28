@@ -53,6 +53,19 @@ RSpec.describe Poppy::Enum do
     it { is_expected.to match_array([['One', 'one'], ['Two', 'two']]) }
   end
 
+  describe '.valid?' do
+    context 'valid' do
+      subject { DummyEnum.valid?(DummyEnum::ONE) }
+
+      it { is_expected.to be_truthy }
+    end
+    context 'invalid' do
+      subject { DummyEnum.valid?(DummyEnum2::ONE) }
+
+      it { is_expected.to be_falsey }
+    end
+  end
+
   describe 'can call inexplicitly defined constants' do
     specify { expect(DummyEnum2::One).to be_a(Class) }
     specify { expect{ DummyEnum2::Wrong }.to raise_error(NameError)}

@@ -20,6 +20,10 @@ module Poppy
         const_get(value_key.to_s.upcase)
       end
 
+      def valid?(value)
+        list.include?(value)
+      end
+
       def collection
         value_keys.map(&method(:value_key_to_collection_item))
       end
