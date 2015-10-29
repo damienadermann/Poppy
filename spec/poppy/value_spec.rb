@@ -10,7 +10,7 @@ RSpec.describe Poppy::Value do
   describe '#to_s' do
     subject { A::TestValue.new.to_s }
 
-    it { is_expected.to eq('A::TestValue') }
+    it { is_expected.to eq('A::TEST_VALUE') }
   end
 
   describe '#humanize' do
