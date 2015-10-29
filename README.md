@@ -198,10 +198,17 @@ end
 => Bread::WHITE
 ```
 
-#### .values
+#### .key_for
 
 ```ruby
-> Bread.values
+> Bread.key_For(Bread::WHITE)
+=> :white
+```
+
+#### .list_keys
+
+```ruby
+> Bread.list_keys
 => [:white, :multigrain, :gluten_free]
 ```
 
@@ -226,5 +233,5 @@ For use with the Rails form builder
 #### #humanize
 ```ruby
 > Bread::WHITE.humanize
-=> White 
+=> White
 ```

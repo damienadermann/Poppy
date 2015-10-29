@@ -14,8 +14,8 @@ end
 
 RSpec.describe Poppy::Enum do
 
-  describe '.list_values' do
-    subject { DummyEnum.list_values }
+  describe '.list_keys' do
+    subject { DummyEnum.list_keys }
 
     it { is_expected.to eq([:one, :two]) }
   end
@@ -63,6 +63,18 @@ RSpec.describe Poppy::Enum do
       subject { DummyEnum.valid?(DummyEnum2::ONE) }
 
       it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '.key_for' do
+    context 'with existing key' do
+      subject { DummyEnum.key_for(DummyEnum::ONE) }
+      it { is_expected.to eq(:one) }
+    end
+
+    context 'with non-existing key' do
+      subject { DummyEnum.key_for('wrong') }
+      it { is_expected.to be_nil }
     end
   end
 

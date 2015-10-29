@@ -7,7 +7,7 @@ module Poppy
         self.value_keys = values
       end
 
-      def list_values
+      def list_keys
         value_keys
       end
 
@@ -22,6 +22,11 @@ module Poppy
 
       def valid?(value)
         list.include?(value)
+      end
+
+      def key_for(value)
+        return unless valid?(value)
+        key_value_map.invert[value]
       end
 
       def collection
@@ -41,7 +46,11 @@ module Poppy
 
       private
 
-      attr_accessor :value_keys, :class_cache
+      attr_accessor :value_keys
+
+      def key_value_map
+        @key_value_map ||= Hash[value_keys.map { |key| [key, enum_for(key)] }]
+      end
 
       def value_key_to_collection_item(value_key)
         [enum_for(value_key).humanize, value_key.to_s]
@@ -88,10 +97,6 @@ module Poppy
 
       def value_keys
         @value_keys ||= []
-      end
-
-      def class_cache
-        @class_cache ||= {}
       end
     end
   end
