@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["damienadermann@gmail.com"]
 
   spec.summary       = %q{Simple Polymorphic Enumerations}
-  spec.description   = %q{A simple enumeration implementation}
+  spec.description   = %q{Simple polymorphic enumerations for ruby}
   spec.homepage      = "https://bitbucket.org/damienadermann/poppy"
   spec.license       = "MIT"
 
