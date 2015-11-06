@@ -145,7 +145,7 @@ end
 
 ## ActiveRecord Integration
 
-See the [Poppy Rails](#TODO) Gem for a simple integration with ActiveRecord for persistance. Enum arrays are also supported for postgreSQL databases.
+See the [Poppy Rails](https://github.com/damienadermann/poppy-rails) Gem for a simple integration with ActiveRecord for persistance. Enum arrays are also supported for postgreSQL databases.
 
 
 ##API
