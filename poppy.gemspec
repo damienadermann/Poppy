@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Simple Polymorphic Enumerations}
   spec.description   = %q{Simple polymorphic enumerations for ruby}
-  spec.homepage      = "https://bitbucket.org/damienadermann/poppy"
+  spec.homepage      = "https://github.com/damienadermann/poppy"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
