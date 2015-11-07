@@ -1,4 +1,6 @@
 #Poppy
+[![Gem Version](https://badge.fury.io/rb/poppy.svg)](http://rubygems.org/gems/poppy)
+[![Build Status](https://travis-ci.org/damienadermann/poppy.svg?branch=master)](http://travis-ci.org/damienadermann/poppy)
 
 ## Introduction
 Simple Polymorphic Enumerations
